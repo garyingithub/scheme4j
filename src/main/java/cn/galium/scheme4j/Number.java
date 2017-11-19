@@ -45,6 +45,12 @@ public class Number implements Calculable<Number>, Comparable<Number> {
         return calculate(a, (a1, b) -> a1 / b, (a12, b) -> a12 / b);
     }
 
+    @Override
+    public Number mod(Number a) {
+        return calculate(a, (a1, b) -> a1 % b, (a12, b) -> a12 % b);
+
+    }
+
     @FunctionalInterface
     interface Calculator<T> {
         T calculate(T a, T b);
@@ -52,32 +58,17 @@ public class Number implements Calculable<Number>, Comparable<Number> {
 
     private Number calculate(Number a, Calculator<Double> doubleCalculator, Calculator<Long> longCalculator) {
         if (number instanceof Double) {
-            if (!(a.number instanceof Double)) {
-                throw new IllegalArgumentException();
-            }
-            return new Number(doubleCalculator.calculate((Double) number, (Double) (a.number)));
+            Double b = Double.valueOf(a.toString());
+            return new Number(doubleCalculator.calculate((Double) number, b));
         } else {
-            if (!(a.number instanceof Long)) {
-                throw new IllegalArgumentException();
+            if (a.number instanceof Double) {
+                return new Number(doubleCalculator.calculate((((Long) number).doubleValue()), (Double) a.number));
+            } else {
+                return new Number(longCalculator.calculate((Long) number, (Long) a.number));
             }
-            return new Number(longCalculator.calculate((Long) number, (Long) (a.number)));
         }
     }
 
-    @Override
-    public Number mod(Number a) {
-        if (number instanceof Double) {
-            if (!(a.number instanceof Double)) {
-                throw new IllegalArgumentException();
-            }
-            return new Number((Double) number % (Double) a.number);
-        } else {
-            if (!(a.number instanceof Long)) {
-                throw new IllegalArgumentException();
-            }
-            return new Number((Long) number % (Long) a.number);
-        }
-    }
 
     @Override
     public String toString() {
