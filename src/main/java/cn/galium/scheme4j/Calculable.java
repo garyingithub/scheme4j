@@ -1,6 +1,6 @@
 package cn.galium.scheme4j;
 
-public interface Type<T> {
+public interface Calculable<T> {
 
     T add(T other);
 
@@ -10,4 +10,5 @@ public interface Type<T> {
 
     T divide(T other);
 
+    T mod(T other);
 }

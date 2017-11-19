@@ -1,9 +1,8 @@
 package cn.galium.scheme4j;
 
-import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 
 public class EvaluatorTest {
 
@@ -21,5 +20,10 @@ public class EvaluatorTest {
         assertTrue(evaluateExpression("(quote 10)").toString().equals("10"));
         assertTrue(evaluateExpression("(if (< 3 5) 3 5)").toString().equals("3"));
         assertTrue(evaluateExpression("(if (< 3 5) 5 3)").toString().equals("5"));
+        assertTrue(evaluateExpression("(if (< (quote a) (quote b)) 5 3)").toString().equals("5"));
+        assertTrue(evaluateExpression("(begin (define r 10) (* 3 (* r r)))").toString().equals("300"));
+        assertTrue(evaluateExpression("(car (cons 3 5))").toString().equals("3"));
+        assertTrue(evaluateExpression("(car (cdr (cons 3 5)))").toString().equals("5"));
+
     }
 }

@@ -1,8 +1,9 @@
 package cn.galium.scheme4j;
 
-public class Number implements Type<Number> {
+public class Number implements Calculable<Number>, Comparable<Number> {
 
     private Object number;
+
     public Number(String symbol) {
 
         try {
@@ -21,84 +22,80 @@ public class Number implements Type<Number> {
     }
 
 
-
-
     @Override
     public Number add(Number a) {
-        if(number instanceof Double) {
-            if(!(a.number instanceof Double)) {
-                throw new IllegalArgumentException();
-            }
-            return new Number((Double)number + (Double)a.number);
-        } else {
-            if(!(a.number instanceof Long)) {
-                throw new IllegalArgumentException();
-            }
-            return new Number((Long) number + (Long) a.number);
-        }
+        return calculate(a, (a1, b) -> a1 + b, (a12, b) -> a12 + b);
+
     }
 
     @Override
     public Number minus(Number a) {
-        if(number instanceof Double) {
-            if(!(a.number instanceof Double)) {
-                throw new IllegalArgumentException();
-            }
-            return new Number((Double)number - (Double)a.number);
-        } else {
-            if(!(a.number instanceof Long)) {
-                throw new IllegalArgumentException();
-            }
-            return new Number((Long) number - (Long) a.number);
-        }
+        return calculate(a, (a1, b) -> a1 - b, (a12, b) -> a12 - b);
+
     }
 
     @Override
     public Number multiply(Number a) {
-        if(number instanceof Double) {
-            if(!(a.number instanceof Double)) {
-                throw new IllegalArgumentException();
-            }
-            return new Number((Double)number * (Double)a.number);
-        } else {
-            if(!(a.number instanceof Long)) {
-                throw new IllegalArgumentException();
-            }
-            return new Number((Long) number * (Long) a.number);
-        }
+        return calculate(a, (a1, b) -> a1 * b, (a12, b) -> a12 * b);
+
     }
 
     @Override
     public Number divide(Number a) {
-        if(number instanceof Double) {
-            if(!(a.number instanceof Double)) {
+        return calculate(a, (a1, b) -> a1 / b, (a12, b) -> a12 / b);
+    }
+
+    @FunctionalInterface
+    interface Calculator<T> {
+        T calculate(T a, T b);
+    }
+
+    private Number calculate(Number a, Calculator<Double> doubleCalculator, Calculator<Long> longCalculator) {
+        if (number instanceof Double) {
+            if (!(a.number instanceof Double)) {
                 throw new IllegalArgumentException();
             }
-            return new Number((Double)number / (Double)a.number);
+            return new Number(doubleCalculator.calculate((Double) number, (Double) (a.number)));
         } else {
-            if(!(a.number instanceof Long)) {
+            if (!(a.number instanceof Long)) {
                 throw new IllegalArgumentException();
             }
-            return new Number((Long) number / (Long) a.number);
+            return new Number(longCalculator.calculate((Long) number, (Long) (a.number)));
         }
     }
 
-    public Boolean lt(Number a) {
-        if(number instanceof Double) {
-            if(!(a.number instanceof Double)) {
+    @Override
+    public Number mod(Number a) {
+        if (number instanceof Double) {
+            if (!(a.number instanceof Double)) {
                 throw new IllegalArgumentException();
             }
-            return ((Double)number < (Double)a.number);
+            return new Number((Double) number % (Double) a.number);
         } else {
-            if(!(a.number instanceof Long)) {
+            if (!(a.number instanceof Long)) {
                 throw new IllegalArgumentException();
             }
-            return ((Long) number < (Long) a.number);
+            return new Number((Long) number % (Long) a.number);
         }
     }
 
     @Override
     public String toString() {
         return String.valueOf(number);
+    }
+
+    @Override
+    public int compareTo(Number a) {
+        if (number instanceof Double) {
+            if (!(a.number instanceof Double)) {
+                throw new IllegalArgumentException();
+            }
+            return Double.compare((Double) number, (Double) (a.number));
+        } else {
+            if (!(a.number instanceof Long)) {
+                throw new IllegalArgumentException();
+            }
+            return Long.compare((Long) number, (Long) (a.number));
+        }
     }
 }
