@@ -43,9 +43,20 @@ public class Evaluator {
                     }
 
                     if (Symbol.DEFINE.equals(op)) {
-                        Symbol symbol = (Symbol) args[0];
-                        environment.put(symbol, eval(args[1], environment));
-                        return null;
+                        if (args[0] instanceof Symbol) {
+                            Symbol symbol = (Symbol) args[0];
+                            environment.put(symbol, eval(args[1], environment));
+                            return null;
+                        } else {
+                            List<Object> list = (List<Object>) args[0];
+                            Symbol symbol = (Symbol) list.get(0);
+
+                            Symbol[] params = new Symbol[list.size()];
+                            params = list.toArray(params);
+                            params = Arrays.copyOfRange(params, 1, params.length);
+                            environment.put(symbol, new Procedure(params, args[1], environment));
+                            return null;
+                        }
                     }
 
                     if (Symbol.SET.equals(op)) {

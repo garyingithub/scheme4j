@@ -20,9 +20,10 @@ public class Environment extends HashMap<Symbol, Object> {
         rootEnv.put(new Symbol("-"), new Procedure(new String[]{"a", "b"}, objects -> ((Calculable) objects[0]).minus(objects[1]), rootEnv));
         rootEnv.put(new Symbol("*"), new Procedure(new String[]{"a", "b"}, objects -> ((Calculable) objects[0]).multiply(objects[1]), rootEnv));
         rootEnv.put(new Symbol("/"), new Procedure(new String[]{"a", "b"}, objects -> ((Calculable) objects[0]).divide(objects[1]), rootEnv));
-        rootEnv.put(new Symbol("%"), new Procedure(new String[]{"a", "b"}, objects -> ((Comparable) objects[0]).compareTo(objects[1]) < 0, rootEnv));
-        rootEnv.put(new Symbol("<"), new Procedure(new String[]{"a", "b"}, objects -> ((Comparable) objects[0]).compareTo(objects[1]) > 0, rootEnv));
-        rootEnv.put(new Symbol(">"), new Procedure(new String[]{"a", "b"}, objects -> ((Comparable) objects[0]).compareTo(objects[1]) == 0, rootEnv));
+        rootEnv.put(new Symbol("%"), new Procedure(new String[]{"a", "b"}, objects -> ((Calculable) objects[0]).mod(objects[1]), rootEnv));
+        rootEnv.put(new Symbol("<"), new Procedure(new String[]{"a", "b"}, objects -> ((Comparable) objects[0]).compareTo(objects[1]) < 0, rootEnv));
+        rootEnv.put(new Symbol(">"), new Procedure(new String[]{"a", "b"}, objects -> ((Comparable) objects[0]).compareTo(objects[1]) > 0, rootEnv));
+        rootEnv.put(new Symbol("="), new Procedure(new String[]{"a", "b"}, objects -> ((Comparable) objects[0]).compareTo(objects[1]) == 0, rootEnv));
         rootEnv.put(new Symbol("<="), new Procedure(new String[]{"a", "b"}, objects -> ((Comparable) objects[0]).compareTo(objects[1]) <= 0, rootEnv));
         rootEnv.put(new Symbol(">="), new Procedure(new String[]{"a", "b"}, objects -> ((Comparable) objects[0]).compareTo(objects[1]) >= 0, rootEnv));
         rootEnv.put(new Symbol("begin"), new Procedure(new String[]{"x"}, objects -> objects[objects.length - 1], rootEnv));
