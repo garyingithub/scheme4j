@@ -17,13 +17,14 @@ public class Tokenizer {
     private Inport inport;
 
     public String[] tokenize(String expression) {
-        Inport inport = new Inport(new ByteArrayInputStream(expression.getBytes()));
+        inport = new Inport(new ByteArrayInputStream(expression.getBytes()));
         List<String> list = new ArrayList<>();
         boolean finish = false;
         while (!finish) {
             String token = nextToken("\\s*(,@|[('`,)]|\"(?:[\\\\].|[^\\\\\"])*\"|;.*|[^\\s('\"`,;)]*)(.*)");
             if (StringUtils.isNoneBlank(token)) {
                 list.add(token);
+            } else {
                 finish = true;
             }
         }
@@ -36,6 +37,9 @@ public class Tokenizer {
         Pattern tokenizer = Pattern.compile(regex);
         while (true) {
             if (StringUtils.isBlank(inport.line)) {
+                if (!inport.scanner.hasNext()) {
+                    return null;
+                }
                 inport.line = inport.scanner.nextLine();
             }
             if (StringUtils.isBlank(inport.line)) {

@@ -1,14 +1,15 @@
 package cn.galium.scheme4j.type;
 
-import cn.galium.scheme4j.Environment;
 import cn.galium.scheme4j.type.properties.Calculable;
 
-public class Number implements Calculable<Number>, Comparable<Number> {
+/**
+ * @author gary
+ */
+public class Number extends java.lang.Number implements Calculable<Number>, Comparable<Number> {
 
-    private Object number;
+    private java.lang.Number number;
 
     public Number(String symbol) {
-
         try {
             number = Long.parseLong(symbol);
         } catch (NumberFormatException e) {
@@ -54,8 +55,24 @@ public class Number implements Calculable<Number>, Comparable<Number> {
 
     }
 
-    public Object evaluate(Object x, Environment environment) {
-        return x;
+    @Override
+    public int intValue() {
+        return number.intValue();
+    }
+
+    @Override
+    public long longValue() {
+        return number.longValue();
+    }
+
+    @Override
+    public float floatValue() {
+        return number.floatValue();
+    }
+
+    @Override
+    public double doubleValue() {
+        return number.doubleValue();
     }
 
     @FunctionalInterface
@@ -64,15 +81,11 @@ public class Number implements Calculable<Number>, Comparable<Number> {
     }
 
     private Number calculate(Number a, Calculator<Double> doubleCalculator, Calculator<Long> longCalculator) {
-        if (number instanceof Double) {
-            Double b = a.number instanceof Double ? (Double) a.number : ((Long) a.number).doubleValue();
-            return new Number(doubleCalculator.calculate((Double) number, b));
+
+        if (number instanceof Double || a.number instanceof Double) {
+            return new Number(doubleCalculator.calculate(doubleValue(), a.doubleValue()));
         } else {
-            if (a.number instanceof Double) {
-                return new Number(doubleCalculator.calculate((((Long) number).doubleValue()), (Double) a.number));
-            } else {
-                return new Number(longCalculator.calculate((Long) number, (Long) a.number));
-            }
+            return new Number(longCalculator.calculate(longValue(), a.longValue()));
         }
     }
 
@@ -84,16 +97,6 @@ public class Number implements Calculable<Number>, Comparable<Number> {
 
     @Override
     public int compareTo(Number a) {
-        if (number instanceof Double) {
-            if (!(a.number instanceof Double)) {
-                throw new IllegalArgumentException();
-            }
-            return Double.compare((Double) number, (Double) (a.number));
-        } else {
-            if (!(a.number instanceof Long)) {
-                throw new IllegalArgumentException();
-            }
-            return Long.compare((Long) number, (Long) (a.number));
-        }
+        return Double.compare((number).doubleValue(), (a.number).floatValue());
     }
 }

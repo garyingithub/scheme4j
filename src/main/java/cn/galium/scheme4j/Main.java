@@ -30,8 +30,9 @@ public class Main {
 //            if(val != null) {
 //                System.out.println(String.valueOf(val));
 //            }
+            Object x = parser.parse();
 
-            System.out.println(evaluator.eval(parser.parse(), Environment.rootEnv));
+            System.out.println(evaluator.eval(x, Environment.rootEnv));
         }
 
     }

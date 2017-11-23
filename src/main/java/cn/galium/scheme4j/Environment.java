@@ -53,9 +53,9 @@ public class Environment extends HashMap<Symbol, Object> {
 
     }
 
-    public Environment(String[] keys, Object[] values, Environment outer) {
+    public Environment(Symbol[] keys, Object[] values, Environment outer) {
         for(int i = 0; i < keys.length; i++) {
-            this.put(new Symbol(keys[i]), values[i]);
+            this.put(keys[i], values[i]);
         }
         this.outer = outer;
     }

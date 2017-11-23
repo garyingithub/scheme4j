@@ -49,4 +49,9 @@ public class Symbol {
     public int hashCode() {
         return content.hashCode();
     }
+
+    @Override
+    public String toString() {
+        return content;
+    }
 }

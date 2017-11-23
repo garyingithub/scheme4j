@@ -10,64 +10,6 @@ import java.util.List;
 @Component
 public class Evaluator {
 
-//    Object eval(Object x, Environment environment) {
-//        if(! (x instanceof List)) {
-//            if(x instanceof String) {
-//                return environment.find((String) x).get(x);
-//            } else {
-//                return x;
-//            }
-//        } else {
-//            List<Object> exp = (List<Object>)x;
-//
-//            String op = String.valueOf(exp.get(0));
-//            Object[] args = Arrays.copyOfRange(exp.toArray(), 1, exp.size());
-//
-//            if("quote".equals(op)) {
-//                return args[0];
-//            }
-//
-//            if("if".equals(op)) {
-//                Object test = args[0];
-//                Object conseq = args[1];
-//                Object alt = args[2];
-//
-//                if((Boolean)(eval(test, environment))) {
-//                    return eval(conseq, environment);
-//                }
-//
-//                return eval(alt, environment);
-//            }
-//
-//            if("define".equals(op)) {
-//                String symbol = (String) args[0];
-//                environment.put(symbol, eval(args[1], environment));
-//                return null;
-//            }
-//
-//            if("set!".equals(op)) {
-//                String symbol = (String) args[1];
-//                environment.find(symbol).put(symbol, args[1]);
-//                return null;
-//            }
-//
-//            if("lambda".equals(op)) {
-//                String[] params = new String[((List<Object>)args[0]).size()];
-//                params = ((List<Object>)args[0]).toArray(params);
-//
-//                Procedure.Func body = (Procedure.Func) args[1];
-//
-//
-//                return new Procedure(params, body, environment);
-//            }
-//
-//            Procedure procedure = (Procedure) eval(op, environment);
-//            Object[] values = Arrays.stream(args).map(o -> eval(o, environment)).toArray();
-//            return procedure.body.call(values);
-//        }
-//    }
-
-
     public Object eval(Object x, Environment environment) {
         while (true) {
             if (!(x instanceof List)) {
@@ -113,19 +55,21 @@ public class Evaluator {
                     }
 
                     if (Symbol.LAMBDA.equals(op)) {
-                        String[] params = new String[((List<Object>) args[0]).size()];
+                        Symbol[] params = new Symbol[((List<Object>) args[0]).size()];
                         params = ((List<Object>) args[0]).toArray(params);
-
-                        Procedure.Func body = (Procedure.Func) args[1];
-
-
-                        return new Procedure(params, body, environment);
+                        return new Procedure(params, args[1], environment);
                     }
 
                     Procedure procedure = (Procedure) eval(op, environment);
                     Object[] values = Arrays.stream(args).map(o -> eval(o, environment)).toArray();
-                    return procedure.body.call(values);
 
+                    Environment inner = new Environment(procedure.params, values, environment);
+                    Object result = eval(procedure.body, inner);
+                    if (result instanceof Procedure.Func) {
+                        return ((Procedure.Func) result).call(values);
+                    } else {
+                        return result;
+                    }
                 }
 
 

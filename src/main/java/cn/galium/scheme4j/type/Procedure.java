@@ -3,22 +3,40 @@ package cn.galium.scheme4j.type;
 import cn.galium.scheme4j.Environment;
 import cn.galium.scheme4j.Evaluator;
 
+import java.util.Arrays;
+
+/**
+ * @author mac
+ */
 public class Procedure {
 
-    public String[] params;
+    /**
+     * parameters' name
+     */
+    public Symbol[] params;
 
     public Environment environment;
 
-    public Func body;
+    public Object body;
 
-    Evaluator evaluator = new Evaluator() {};
-
-    Object call(Object[] args) {
+    Object call(Evaluator evaluator, Object[] args) {
         return evaluator.eval(body, new Environment(params, args, environment));
     }
 
-    public Procedure(String[] params, Func body, Environment environment) {
+    public Procedure(Symbol[] params, Object body, Environment environment) {
         this.params = params;
+        this.environment = environment;
+        this.body = body;
+    }
+
+    public Procedure(String[] params, Object body, Environment environment) {
+        this.params = Arrays.stream(params).map(Symbol::new).toArray(Symbol[]::new);
+        this.environment = environment;
+        this.body = body;
+    }
+
+    public Procedure(String[] params, Func body, Environment environment) {
+        this.params = Arrays.stream(params).map(Symbol::new).toArray(Symbol[]::new);
         this.environment = environment;
         this.body = body;
     }

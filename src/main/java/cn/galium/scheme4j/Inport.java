@@ -11,14 +11,15 @@ public class Inport {
     InputStream inputStream = System.in;
     public String line = "";
 
-    public Scanner scanner = new Scanner(inputStream);
+    public Scanner scanner;
 
     public Inport(InputStream inputStream) {
         this.inputStream = inputStream;
+        scanner = new Scanner(inputStream);
     }
 
     public Inport() {
-
+        this(System.in);
     }
 
 
