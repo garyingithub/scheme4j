@@ -1,12 +1,15 @@
-package cn.galium.scheme4j;
+package cn.galium.scheme4j.type;
+
+import cn.galium.scheme4j.Environment;
+import cn.galium.scheme4j.Evaluator;
 
 public class Procedure {
 
-    String[] params;
+    public String[] params;
 
-    Environment environment;
+    public Environment environment;
 
-    Func body;
+    public Func body;
 
     Evaluator evaluator = new Evaluator() {};
 
@@ -21,7 +24,7 @@ public class Procedure {
     }
 
     @FunctionalInterface
-    interface Func {
+    public interface Func {
         Object call(Object[] params);
     }
 }

@@ -1,4 +1,7 @@
-package cn.galium.scheme4j;
+package cn.galium.scheme4j.type;
+
+import cn.galium.scheme4j.Environment;
+import cn.galium.scheme4j.type.properties.Calculable;
 
 public class Number implements Calculable<Number>, Comparable<Number> {
 
@@ -51,6 +54,10 @@ public class Number implements Calculable<Number>, Comparable<Number> {
 
     }
 
+    public Object evaluate(Object x, Environment environment) {
+        return x;
+    }
+
     @FunctionalInterface
     interface Calculator<T> {
         T calculate(T a, T b);
@@ -58,7 +65,7 @@ public class Number implements Calculable<Number>, Comparable<Number> {
 
     private Number calculate(Number a, Calculator<Double> doubleCalculator, Calculator<Long> longCalculator) {
         if (number instanceof Double) {
-            Double b = Double.valueOf(a.toString());
+            Double b = a.number instanceof Double ? (Double) a.number : ((Long) a.number).doubleValue();
             return new Number(doubleCalculator.calculate((Double) number, b));
         } else {
             if (a.number instanceof Double) {

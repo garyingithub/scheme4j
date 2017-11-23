@@ -11,7 +11,8 @@ public class EvaluatorTest {
     Tokenizer tokenizer = new Tokenizer() {};
 
     private Object evaluateExpression(String exp) {
-        return evaluator.eval(parser.parse(tokenizer.tokenize(exp)), Environment.rootEnv);
+//        return evaluator.eval(parser.parse(tokenizer.tokenize(exp)), Environment.rootEnv);
+        return null;
     }
 
     @Test

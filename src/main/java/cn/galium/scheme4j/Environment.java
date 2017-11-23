@@ -1,10 +1,14 @@
 package cn.galium.scheme4j;
 
 
+import cn.galium.scheme4j.type.Procedure;
+import cn.galium.scheme4j.type.Symbol;
+import cn.galium.scheme4j.type.properties.Calculable;
+
 import java.util.Arrays;
 import java.util.HashMap;
 
-public class Environment extends HashMap<String, Object>{
+public class Environment extends HashMap<Symbol, Object> {
 
     private Environment outer;
 
@@ -12,31 +16,31 @@ public class Environment extends HashMap<String, Object>{
 
     static {
         rootEnv = new Environment();
-        rootEnv.put("+", new Procedure(new String[]{"a", "b"}, objects -> ((Calculable) objects[0]).add(objects[1]), rootEnv));
-        rootEnv.put("-", new Procedure(new String[]{"a", "b"}, objects -> ((Calculable) objects[0]).minus(objects[1]), rootEnv));
-        rootEnv.put("*", new Procedure(new String[]{"a", "b"}, objects -> ((Calculable) objects[0]).multiply(objects[1]), rootEnv));
-        rootEnv.put("/", new Procedure(new String[]{"a", "b"}, objects -> ((Calculable) objects[0]).divide(objects[1]), rootEnv));
-        rootEnv.put("<", new Procedure(new String[]{"a", "b"}, objects -> ((Comparable) objects[0]).compareTo(objects[1]) < 0, rootEnv));
-        rootEnv.put(">", new Procedure(new String[]{"a", "b"}, objects -> ((Comparable) objects[0]).compareTo(objects[1]) > 0, rootEnv));
-        rootEnv.put("=", new Procedure(new String[]{"a", "b"}, objects -> ((Comparable) objects[0]).compareTo(objects[1]) == 0, rootEnv));
-        rootEnv.put("<=", new Procedure(new String[]{"a", "b"}, objects -> ((Comparable) objects[0]).compareTo(objects[1]) <= 0, rootEnv));
-        rootEnv.put(">=", new Procedure(new String[]{"a", "b"}, objects -> ((Comparable) objects[0]).compareTo(objects[1]) >= 0, rootEnv));
-        rootEnv.put("begin", new Procedure(new String[] {"x"}, objects -> objects[objects.length - 1], rootEnv));
-        rootEnv.put("car", new Procedure(new String[]{"x"}, objects -> {
+        rootEnv.put(new Symbol("+"), new Procedure(new String[]{"a", "b"}, objects -> ((Calculable) objects[0]).add(objects[1]), rootEnv));
+        rootEnv.put(new Symbol("-"), new Procedure(new String[]{"a", "b"}, objects -> ((Calculable) objects[0]).minus(objects[1]), rootEnv));
+        rootEnv.put(new Symbol("*"), new Procedure(new String[]{"a", "b"}, objects -> ((Calculable) objects[0]).multiply(objects[1]), rootEnv));
+        rootEnv.put(new Symbol("/"), new Procedure(new String[]{"a", "b"}, objects -> ((Calculable) objects[0]).divide(objects[1]), rootEnv));
+        rootEnv.put(new Symbol("%"), new Procedure(new String[]{"a", "b"}, objects -> ((Comparable) objects[0]).compareTo(objects[1]) < 0, rootEnv));
+        rootEnv.put(new Symbol("<"), new Procedure(new String[]{"a", "b"}, objects -> ((Comparable) objects[0]).compareTo(objects[1]) > 0, rootEnv));
+        rootEnv.put(new Symbol(">"), new Procedure(new String[]{"a", "b"}, objects -> ((Comparable) objects[0]).compareTo(objects[1]) == 0, rootEnv));
+        rootEnv.put(new Symbol("<="), new Procedure(new String[]{"a", "b"}, objects -> ((Comparable) objects[0]).compareTo(objects[1]) <= 0, rootEnv));
+        rootEnv.put(new Symbol(">="), new Procedure(new String[]{"a", "b"}, objects -> ((Comparable) objects[0]).compareTo(objects[1]) >= 0, rootEnv));
+        rootEnv.put(new Symbol("begin"), new Procedure(new String[]{"x"}, objects -> objects[objects.length - 1], rootEnv));
+        rootEnv.put(new Symbol("car"), new Procedure(new String[]{"x"}, objects -> {
             Object[] list = (Object[]) objects[0];
             return list[0];
         }, rootEnv));
-        rootEnv.put("cdr", new Procedure(new String[]{"x"}, objects -> {
+        rootEnv.put(new Symbol("cdr"), new Procedure(new String[]{"x"}, objects -> {
             Object[] list = (Object[]) objects[0];
             return Arrays.copyOfRange(list, 1, list.length);
         }, rootEnv));
-        rootEnv.put("cons", new Procedure(new String[]{"x", "y"}, objects -> new Object[]{objects[0], objects[1]}, rootEnv));
-        rootEnv.put("eq?", new Procedure(new String[]{"x"}, objects -> objects[0].equals(objects[1]), rootEnv));
+        rootEnv.put(new Symbol("cons"), new Procedure(new String[]{"x", "y"}, objects -> new Object[]{objects[0], objects[1]}, rootEnv));
+        rootEnv.put(new Symbol("eq?"), new Procedure(new String[]{"x"}, objects -> objects[0].equals(objects[1]), rootEnv));
 
 
     }
 
-    public Environment find(String symbol) {
+    public Environment find(Symbol symbol) {
         if(this.containsKey(symbol)) {
             return this;
         }
@@ -49,9 +53,9 @@ public class Environment extends HashMap<String, Object>{
 
     }
 
-    Environment(String[] keys, Object[] values, Environment outer) {
+    public Environment(String[] keys, Object[] values, Environment outer) {
         for(int i = 0; i < keys.length; i++) {
-            this.put(keys[i], values[i]);
+            this.put(new Symbol(keys[i]), values[i]);
         }
         this.outer = outer;
     }

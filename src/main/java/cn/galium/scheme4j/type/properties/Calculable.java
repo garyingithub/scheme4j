@@ -1,4 +1,4 @@
-package cn.galium.scheme4j;
+package cn.galium.scheme4j.type.properties;
 
 public interface Calculable<T> {
 
