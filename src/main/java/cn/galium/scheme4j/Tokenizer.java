@@ -16,12 +16,14 @@ public class Tokenizer {
     @Autowired
     private Inport inport;
 
+    private Matcher m;
+
     public String[] tokenize(String expression) {
         inport = new Inport(new ByteArrayInputStream(expression.getBytes()));
         List<String> list = new ArrayList<>();
         boolean finish = false;
         while (!finish) {
-            String token = nextToken("\\s*(,@|[('`,)]|\"(?:[\\\\].|[^\\\\\"])*\"|;.*|[^\\s('\"`,;)]*)(.*)");
+            String token = nextToken("\\s*(,@|[('`,)]|\"(?:[\\\\].|[^\\\\\"])*\"|;.*|[^\\s('\"`,;)]*)");
             if (StringUtils.isNoneBlank(token)) {
                 list.add(token);
             } else {
@@ -41,14 +43,13 @@ public class Tokenizer {
                     return null;
                 }
                 inport.line = inport.scanner.nextLine();
+                m = tokenizer.matcher(inport.line);
+
             }
             if (StringUtils.isBlank(inport.line)) {
                 return null;
             }
-            Matcher m = tokenizer.matcher(inport.line);
-            if (m.find() && !m.group(1).startsWith(";") && !inport.line.equals(m.group(2))) {
-
-                inport.line = m.group(2);
+            if (m.find() && !m.group(1).startsWith(";")) {
                 return m.group(1);
 
             } else {
@@ -58,7 +59,7 @@ public class Tokenizer {
     }
 
     public String nextToken() {
-        return nextToken("\\s*(,@|[('`,)]|\"(?:[\\\\].|[^\\\\\"])*\"|;.*|[^\\s('\"`,;)]*)(.*)");
+        return nextToken("\\s*(,@|[('`,)]|\"(?:[\\\\].|[^\\\\\"])*\"|;.*|[^\\s('\"`,;)]*)");
     }
 
 }
