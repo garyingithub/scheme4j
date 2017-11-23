@@ -42,10 +42,12 @@ public class Environment extends HashMap<Symbol, Object> {
     }
 
     public Environment find(Symbol symbol) {
-        if(this.containsKey(symbol)) {
-            return this;
+
+        Environment temp = this;
+        while (!temp.containsKey(symbol)) {
+            temp = temp.outer;
         }
-        return outer.find(symbol);
+        return temp;
     }
 
 

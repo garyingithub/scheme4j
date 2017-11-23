@@ -36,10 +36,11 @@ public class Evaluator {
                         Object alt = args[2];
 
                         if ((Boolean) (eval(test, environment))) {
-                            return eval(conseq, environment);
+                            x = conseq;
+                        } else {
+                            x = alt;
                         }
-
-                        return eval(alt, environment);
+                        continue;
                     }
 
                     if (Symbol.DEFINE.equals(op)) {
@@ -71,15 +72,29 @@ public class Evaluator {
                         return new Procedure(params, args[1], environment);
                     }
 
+                    if (Symbol.BEGIN.equals(op)) {
+                        List<Object> list = (List<Object>) args[0];
+
+                        for (int i = 0; i < list.size(); i++) {
+                            eval(list.get(i), environment);
+                        }
+                        x = eval(list.get(list.size() - 1), environment);
+                        continue;
+                    }
+
                     Procedure procedure = (Procedure) eval(op, environment);
-                    Object[] values = Arrays.stream(args).map(o -> eval(o, environment)).toArray();
+                    Object[] values = new Object[args.length];
+                    for (int i = 0; i < values.length; i++) {
+                        values[i] = eval(args[i], environment);
+                    }
 
                     Environment inner = new Environment(procedure.params, values, environment);
-                    Object result = eval(procedure.body, inner);
-                    if (result instanceof Procedure.Func) {
-                        return ((Procedure.Func) result).call(values);
+
+                    if (procedure.body instanceof Procedure.Func) {
+                        return ((Procedure.Func) (procedure.body)).call(values);
                     } else {
-                        return result;
+                        x = procedure.body;
+                        environment = inner;
                     }
                 }
 
